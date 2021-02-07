@@ -2,7 +2,7 @@ package Db
 
 import (
 	"app/config"
-	"drive/logging"
+	"github.com/WaySabre/appDrive/logging"
 	"sync"
 	"time"
 
