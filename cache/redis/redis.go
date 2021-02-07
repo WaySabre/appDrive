@@ -275,3 +275,16 @@ func (rc *Cache) Set(key string, val interface{}) error {
 func (rc *Cache) associate(originKey interface{}) string {
 	return fmt.Sprintf("%s:%s", rc.key, originKey)
 }
+
+func (rc *Cache) Lock(key string, timeout time.Duration) (bool, error) {
+	res, err := rc.do("SET", key, 1, "EX", int64(timeout/time.Second), "NX")
+	if err != nil {
+		return false, err
+	}
+	return res == "OK", nil
+}
+
+func (rc *Cache) UnLock(key string) error {
+	_, err := rc.do("del", key)
+	return err
+}
