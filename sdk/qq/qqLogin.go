@@ -6,7 +6,7 @@ import (
 	"encoding/base64"
 	"encoding/json"
 	"net/url"
-
+	"strings"
 	"github.com/WaySabre/appDrive/sdk/unils"
 )
 
@@ -23,9 +23,7 @@ type (
 		Province  string `json:"province,omitempty"`  // 普通用户个人资料填写的省份
 		City      string `json:"city,omitempty"`      // 普通用户个人资料填写的城市
 		Country   string `json:"country,omitempty"`   // 国家，如中国为CN
-		Figureurl string `json:"figureurl,omitempty"` // 用户头像，最后一个数值代表正方形头像大小（有0、46、64、96、132数值可选，0代表640*640正方形头像），用户没有头像时该项为空
-		ErrCode   uint   `json:"errcode,omitempty"`
-		ErrMsg    string `json:"errmsg,omitempty"`
+		Figureurl string `json:"figureurl,omitempty"` // 用户头像
 	}
 )
 
@@ -45,7 +43,7 @@ func (e *Config) GetUserInfo(openId, token, pf string) (QqUserInfo *QqUserInfo, 
 	}
 	//获取源串
 	sourceUrl := url.QueryEscape(params.Encode())
-	sig := url.QueryEscape(HmacSHA1(e.Key+"&", "GET&%2Fv3%2Fuser%2Fget_info&"+sourceUrl))
+	sig := HmacSHA1(e.Key+"&", "GET&%2Fv3%2Fuser%2Fget_info&"+sourceUrl)
 	params.Add("sig", sig)
 	body, err := utils.NewRequest("GET", UserInfoURL, []byte(params.Encode()))
 	if err != nil {
@@ -55,6 +53,7 @@ func (e *Config) GetUserInfo(openId, token, pf string) (QqUserInfo *QqUserInfo, 
 	if err != nil {
 		return nil, err
 	}
+	QqUserInfo.Figureurl = strings.Replace(QqUserInfo.Figureurl, "\\", "", -1)
 	QqUserInfo.OpenID = openId
 	return
 }
