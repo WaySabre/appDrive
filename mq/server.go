@@ -41,6 +41,7 @@ func (srv *server) Run(deliveries <-chan amqp.Delivery) {
 			go srv.startHandler(d)
 			// after close, will not process new message
 			if srv.close {
+				d.Reject(true)
 				break
 			}
 		}
