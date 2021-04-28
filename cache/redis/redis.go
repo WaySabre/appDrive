@@ -197,7 +197,7 @@ func (rc *Cache) Scan(pattern string) (keys []string, err error) {
 	}
 }
 
-func (rc *Cache) HmSet(key string, v map[string]int) error {
+func (rc *Cache) HmSet(key string, v interface{}) error {
 	_, err := rc.do("HMSET", redis.Args{}.Add(key).AddFlat(v)...)
 	if err != nil {
 		return err
